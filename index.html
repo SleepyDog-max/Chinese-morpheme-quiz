@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自由词素与粘着词素测验</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            color: #333;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        button {
+            margin: 5px;
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>自由词素与粘着词素测验</h2>
+        <div id="quiz"></div>
+        <button id="prev" class="btn-secondary">上一题</button>
+        <button id="next" class="btn-primary">下一题</button>
+        <button id="restart" class="btn-danger hidden">重新开始</button>
+        <div id="result" class="hidden"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "天空 的 空 是？", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 0, explanation: "‘空’可以独立成词，例如‘空气’。" },
+            { question: "Is 'dis-' in 'disagree' a free morpheme or a bound morpheme?", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘dis-’ 是前缀，不能独立成词，例如‘disagree’、‘disapprove’。" },
+            { question: "苹果 的 苹 是？", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘苹’不能独立成词，只能出现在‘苹果’等词中。" },
+            { question: "Identify the morpheme type of '-ment' in 'enlightenment'.", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘-ment’ 是后缀，需要依附其他词，例如‘enlightenment’。" },
+            { question: "化学 的 化 是？", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘化’不能独立成词，需要与其他词素组合。" },
+            { question: "What type of morpheme is '-ive' in 'destructive'?", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘-ive’ 是粘着词素，不能独立成词，例如‘destructive’、‘creative’。" },
+            { question: "狼 是？", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 0, explanation: "‘狼’可以独立成词，例如‘狼群’。" },
+            { question: "Is 're-' in 'reconsider' a free morpheme or a bound morpheme?", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘re-’ 是前缀，不能独立成词，例如‘reconsider’、‘rewrite’。" },
+            { question: "火 是？", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 0, explanation: "‘火’可以独立成词，例如‘火灾’。" },
+            { question: "Identify the morpheme type of '-ness' in 'happiness'.", options: ["自由词素 (F)", "粘着词素 (B)"], answer: 1, explanation: "‘-ness’ 是粘着词素，不能独立成词，例如‘happiness’、‘kindness’。" }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById("quiz").innerHTML = `<div class='question'>${q.question}</div>` +
+                q.options.map((opt, index) => `<button class='option' onclick='checkAnswer(${index})'>${opt}</button>`).join("<br>");
+            document.getElementById("prev").style.display = currentQuestion > 0 ? "inline-block" : "none";
+            document.getElementById("next").style.display = "none";
+            document.getElementById("result").innerHTML = "";
+        }
+        
+        function checkAnswer(selected) {
+            if (selected === questions[currentQuestion].answer) {
+                score++;
+            }
+            document.getElementById("result").innerHTML = `<p>${questions[currentQuestion].explanation}</p>`;
+            document.getElementById("result").classList.remove("hidden");
+            document.getElementById("next").style.display = "inline-block";
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function showResult() {
+            document.getElementById("quiz").innerHTML = "";
+            document.getElementById("prev").style.display = "none";
+            document.getElementById("next").style.display = "none";
+            document.getElementById("restart").style.display = "inline-block";
+            document.getElementById("result").innerHTML = `<h3>测验完成！</h3>
+                <p>你的得分：${score} / ${questions.length}</p>
+                <ul>${questions.map((q, i) => `<li>${q.question} 答案: ${q.options[q.answer]} - ${q.explanation}</li>`).join("")}</ul>`;
+            document.getElementById("result").classList.remove("hidden");
+        }
+        
+        document.getElementById("prev").addEventListener("click", () => { currentQuestion--; loadQuestion(); });
+        document.getElementById("next").addEventListener("click", nextQuestion);
+        document.getElementById("restart").addEventListener("click", () => location.reload());
+        
+        loadQuestion();
+    </script>
+</body>
+</html>
